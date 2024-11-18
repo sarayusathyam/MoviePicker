@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Date</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container {
+      margin-top: 50px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+      position: relative;
+    }
+
+    .header {
+      font-family: "Dancing Script", cursive;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .lists-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .list-box {
+      flex: 1;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .list-box h3 {
+      margin-top: 0;
+    }
+
+    .list-input {
+      width: 90%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .list-input:focus {
+      border-color: #ff6f61;
+    }
+
+    .movie-list {
+      list-style-type: disc;
+      padding-left: 20px;
+      text-align: left;
+      width: 100%;
+      margin: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background-color: #ff6f61;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e65a50;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .theme-selector {
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    /* Starlight Theme Stars */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0.5;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div> <!-- Star Layer -->
+  <div class="container">
+    <h1 class="header">Movie Date</h1>
+    <div class="theme-selector">
+      <label for="theme">Select a Theme: </label>
+      <select id="theme" onchange="changeTheme()">
+        <option value="romantic">Romantic</option>
+        <option value="sunset">Sunset Glow</option>
+        <option value="starlight">Starlight</option>
+        <option value="pastel">Pastel Love</option>
+      </select>
+    </div>
+
+    <div class="lists-container">
+      <div class="list-box">
+        <h3>Her List</h3>
+        <input class="list-input" id="girlfriendInput" type="text" placeholder="Enter a movie..." onkeypress="addMovie(event, 'girlfriendList')">
+        <ul id="girlfriendList" class="movie-list"></ul>
+      </div>
+      <div class="list-box">
+        <h3>His List</h3>
+        <input class="list-input" id="boyfriendInput" type="text" placeholder="Enter a movie..." onkeypress="addMovie(event, 'boyfriendList')">
+        <ul id="boyfriendList" class="movie-list"></ul>
+      </div>
+    </div>
+
+    <button onclick="pickRandomMovie()">Pick a Movie</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    // Add a movie to the list when Enter is pressed
+    function addMovie(event, listId) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const input = event.target;
+        const movie = input.value.trim();
+
+        if (movie !== "") {
+          const list = document.getElementById(listId);
+          const listItem = document.createElement("li");
+          listItem.textContent = movie;
+          list.appendChild(listItem);
+          input.value = ""; // Clear input field
+        }
+      }
+    }
+
+    // Pick a random movie from both lists
+    function pickRandomMovie() {
+      const girlfriendList = Array.from(document.getElementById("girlfriendList").children).map(li => li.textContent);
+      const boyfriendList = Array.from(document.getElementById("boyfriendList").children).map(li => li.textContent);
+
+      const combinedList = [...girlfriendList, ...boyfriendList];
+
+      if (combinedList.length === 0) {
+        document.getElementById("result").textContent = "Please add movies to at least one list!";
+        return;
+      }
+
+      const randomMovie = combinedList[Math.floor(Math.random() * combinedList.length)];
+      document.getElementById("result").textContent = `You should watch: "${randomMovie}"`;
+    }
+
+    // Change the theme based on user selection
+    function changeTheme() {
+      const theme = document.getElementById("theme").value;
+
+      if (theme === "romantic") {
+        document.body.style.background = "linear-gradient(to bottom, #ff9a9e, #fad0c4)";
+        document.querySelector(".stars").style.display = "none";
+      } else if (theme === "sunset") {
+        document.body.style.background = "linear-gradient(to bottom, #ff7e5f, #feb47b)";
+        document.querySelector(".stars").style.display = "none";
+      } else if (theme === "starlight") {
+        document.body.style.background = "linear-gradient(to bottom, #1e3c72, #2a5298)";
+        document.querySelector(".stars").style.display = "block";
+        generateStars();
+      } else if (theme === "pastel") {
+        document.body.style.background = "linear-gradient(to bottom, #a1c4fd, #c2e9fb)";
+        document.querySelector(".stars").style.display = "none";
+      }
+    }
+
+    // Generate random stars
+    function generateStars() {
+      const starsContainer = document.querySelector(".stars");
+      starsContainer.innerHTML = ""; // Clear previous stars
+
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement("div");
+        star.classList.add("star");
+        star.style.left = Math.random() * 100 + "%";
+        star.style.top = Math.random() * 100 + "%";
+        star.style.animationDelay = Math.random() * 2 + "s";
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // Initialize default theme
+    changeTheme();
+  </script>
+</body>
+</html>

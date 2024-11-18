@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Couple's Movie Picker</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      background: linear-gradient(to bottom, #ff9a9e, #fad0c4);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin-top: 50px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .header {
+      font-family: "Dancing Script", cursive;
+      font-size: 36px;
+      color: #ff6f61;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      color: #555;
+    }
+
+    .lists-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .list-box {
+      flex: 1;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: rgba(255, 230, 230, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .list-box h3 {
+      margin-top: 0;
+      color: #ff6f61;
+    }
+
+    .list-input {
+      width: 90%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .list-input:focus {
+      border-color: #ff6f61;
+    }
+
+    .movie-list {
+      list-style-type: disc;
+      padding-left: 20px;
+      text-align: left;
+      width: 100%;
+      margin: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background-color: #ff6f61;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e65a50;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .heart-divider {
+      margin: 20px auto;
+      width: 50%;
+      display: flex;
+      align-items: center;
+    }
+
+    .heart-divider:before,
+    .heart-divider:after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: #ff6f61;
+      margin: 0 10px;
+    }
+
+    .heart-divider span {
+      color: #ff6f61;
+      font-size: 24px;
+      font-family: "Dancing Script", cursive;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="header">Movie Night</h1>
+    <p>Add movies to your lists. Press Enter after each movie, and we'll pick one randomly for your movie night!</p>
+    
+    <div class="lists-container">
+      <div class="list-box">
+        <h3>Her List</h3>
+        <input class="list-input" id="girlfriendInput" type="text" placeholder="Enter a movie..." onkeypress="addMovie(event, 'girlfriendList')">
+        <ul id="girlfriendList" class="movie-list"></ul>
+      </div>
+      <div class="list-box">
+        <h3>His List</h3>
+        <input class="list-input" id="boyfriendInput" type="text" placeholder="Enter a movie..." onkeypress="addMovie(event, 'boyfriendList')">
+        <ul id="boyfriendList" class="movie-list"></ul>
+      </div>
+    </div>
+    
+    <div class="heart-divider">
+      <span>💖</span>
+    </div>
+
+    <button onclick="pickRandomMovie()">Pick a Movie</button>
+    
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    // Add a movie to the list when Enter is pressed
+    function addMovie(event, listId) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const input = event.target;
+        const movie = input.value.trim();
+
+        if (movie !== "") {
+          const list = document.getElementById(listId);
+          const listItem = document.createElement("li");
+          listItem.textContent = movie;
+          list.appendChild(listItem);
+          input.value = ""; // Clear input field
+        }
+      }
+    }
+
+    // Pick a random movie from both lists
+    function pickRandomMovie() {
+      const girlfriendList = Array.from(document.getElementById("girlfriendList").children).map(li => li.textContent);
+      const boyfriendList = Array.from(document.getElementById("boyfriendList").children).map(li => li.textContent);
+
+      const combinedList = [...girlfriendList, ...boyfriendList];
+
+      if (combinedList.length === 0) {
+        document.getElementById("result").textContent = "Please add movies to at least one list!";
+        return;
+      }
+
+      const randomMovie = combinedList[Math.floor(Math.random() * combinedList.length)];
+      document.getElementById("result").textContent = `You should watch: "${randomMovie}"`;
+    }
+  </script>
+</body>
+</html>
